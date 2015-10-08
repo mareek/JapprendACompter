@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="JapprendACompter.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JapprendACompter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="50"/>
+            </Style>
+        </Grid.Resources>
+        <Grid Name="FullScreenMessagePanel" Background="Black" Visibility="Collapsed">
+            <TextBlock Name="MessageTextBlock" FontSize="92" Foreground="White" VerticalAlignment="Center" TextAlignment="Center"/>
+        </Grid>
+        <StackPanel Name="ContentPanel">
+            <TextBlock>Combien font...</TextBlock>
+            <TextBlock Name="OperationTextblock"/>
+            <TextBox Name="AnswerTextBox" InputScope="Number" FontSize="50" Width="300" TextChanged="AnswerTextBox_TextChanged"/>
+            
+        </StackPanel>
+    </Grid>
+</Page>
