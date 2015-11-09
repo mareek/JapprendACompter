@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,6 +19,8 @@ namespace JapprendACompter
 
         private int _wrongAnswerCount;
 
+        private Stopwatch _chrono;
+
         public MainPage()
         {
             InitializeComponent();
@@ -36,68 +29,99 @@ namespace JapprendACompter
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             GenerateOperation();
+
+            var getupppa = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            getupppa.Tick += getupppa_Tick;
+            getupppa.Start();
+
+        }
+
+        private async void getupppa_Tick(object sender, object e)
+        {
+            if (_chrono != null && _chrono.Elapsed > TimeSpan.FromSeconds(15))
+            {
+                await ShowMessage(ResponseLevel.TooSlow);
+            }
         }
 
         private async void AnswerTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            switch (CheckAnswer())
-            {
-                case true:
-                    await ManageRightAnswer();
-                    break;
-                case false:
-                    await ManageWrongAnswer();
-                    break;
-            }
-        }
-
-        private async Task ManageRightAnswer()
-        {
-            await ShowMessage("Bravo !", TimeSpan.FromSeconds(2));
-            GenerateOperation();
-        }
-
-        private async Task ManageWrongAnswer()
-        {
-            _wrongAnswerCount++;
-
-            if (_wrongAnswerCount >= 3)
-            {
-                var expectedAnswer = (_leftOperand + _rightOperand).ToString();
-                await ShowMessage("Perdu :-(\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
-                GenerateOperation();
-            }
-        }
-
-        private async Task ShowMessage(string message, TimeSpan duration)
-        {
-            MessageTextBlock.Text = message;
-            FullScreenMessagePanel.Visibility = Visibility.Visible;
-            this.ContentPanel.Visibility = Visibility.Collapsed;
-
-            await Task.Delay(duration);
-
-            FullScreenMessagePanel.Visibility = Visibility.Collapsed;
-            this.ContentPanel.Visibility = Visibility.Visible;
-        }
-
-        private bool? CheckAnswer()
         {
             var expectedAnswer = (_leftOperand + _rightOperand).ToString();
             var actualAnswer = AnswerTextBox.Text;
 
             if (actualAnswer == expectedAnswer)
             {
-                return true;
+                await ShowMessage(GetResponseLevel());
             }
-            else if (actualAnswer.Length < expectedAnswer.Length && expectedAnswer.Contains(actualAnswer))
+            else if (actualAnswer.Length >= expectedAnswer.Length || !expectedAnswer.Contains(actualAnswer))
             {
-                return null;
+                _wrongAnswerCount++;
+            }
+
+            if (_wrongAnswerCount >= 3)
+            {
+                await ShowMessage(ResponseLevel.Wrong);
+            }
+        }
+
+        private ResponseLevel GetResponseLevel()
+        {
+            if (_chrono == null || _chrono.Elapsed < TimeSpan.FromSeconds(5))
+            {
+                return ResponseLevel.Fast;
+            }
+            else if (_chrono.Elapsed < TimeSpan.FromSeconds(10))
+            {
+                return ResponseLevel.Normal;
+            }
+            else if (_chrono.Elapsed < TimeSpan.FromSeconds(15))
+            {
+                return ResponseLevel.Slow;
             }
             else
             {
-                return false;
+                return ResponseLevel.TooSlow;
             }
+        }
+
+        private async Task ShowMessage(ResponseLevel responseLevel)
+        {
+            _chrono = null;
+            var expectedAnswer = (_leftOperand + _rightOperand).ToString();
+            switch (responseLevel)
+            {
+                case ResponseLevel.Fast:
+                    await ShowMessage("Bravo !", TimeSpan.FromSeconds(2));
+                    break;
+                case ResponseLevel.Normal:
+                    await ShowMessage("C'est bien.", TimeSpan.FromSeconds(2));
+                    break;
+                case ResponseLevel.Slow:
+                    await ShowMessage("Juste mais lent...", TimeSpan.FromSeconds(3));
+                    break;
+                case ResponseLevel.TooSlow:
+                    await ShowMessage("Trop lent !\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
+                    break;
+                case ResponseLevel.Wrong:
+                    await ShowMessage("Perdu :-(\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
+                    break;
+            }
+
+            _chrono = Stopwatch.StartNew();
+            GenerateOperation();
+        }
+
+        private async Task ShowMessage(string message, TimeSpan duration)
+        {
+            MessageTextBlock.Text = message;
+            FullScreenMessagePanel.Visibility = Visibility.Visible;
+            ContentPanel.Visibility = Visibility.Collapsed;
+            InputPane.GetForCurrentView().TryHide();
+
+            await Task.Delay(duration);
+
+            FullScreenMessagePanel.Visibility = Visibility.Collapsed;
+            ContentPanel.Visibility = Visibility.Visible;
         }
 
         private void GenerateOperation()
