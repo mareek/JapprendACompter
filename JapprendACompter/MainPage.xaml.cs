@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -14,12 +16,17 @@ namespace JapprendACompter
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private static readonly TimeSpan Duree = TimeSpan.FromMinutes(10);
+
+        private Dictionary<ResponseLevel, int> _responseCountByLevel;
+
         private int _leftOperand;
         private int _rightOperand;
 
         private int _wrongAnswerCount;
 
-        private Stopwatch _chrono;
+        private Stopwatch _chronoReponse;
+        private Stopwatch _chronoTotal;
 
         public MainPage()
         {
@@ -28,17 +35,32 @@ namespace JapprendACompter
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            GenerateOperation();
-
+            Init();
             var getupppa = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
             getupppa.Tick += getupppa_Tick;
             getupppa.Start();
+        }
 
+        private void Init()
+        {
+            _responseCountByLevel = new Dictionary<ResponseLevel, int>
+            {
+                [ResponseLevel.Fast] = 0,
+                [ResponseLevel.Normal] = 0,
+                [ResponseLevel.Slow] = 0,
+                [ResponseLevel.TooSlow] = 0,
+                [ResponseLevel.Wrong] = 0
+            };
+
+            _chronoReponse = null;
+            _chronoTotal = null;
+
+            GenerateOperation();
         }
 
         private async void getupppa_Tick(object sender, object e)
         {
-            if (_chrono != null && _chrono.Elapsed > TimeSpan.FromSeconds(15))
+            if (_chronoReponse != null && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15))
             {
                 await ShowMessage(ResponseLevel.TooSlow);
             }
@@ -66,15 +88,15 @@ namespace JapprendACompter
 
         private ResponseLevel GetResponseLevel()
         {
-            if (_chrono == null || _chrono.Elapsed < TimeSpan.FromSeconds(5))
+            if (_chronoReponse == null || _chronoReponse.Elapsed < TimeSpan.FromSeconds(5))
             {
                 return ResponseLevel.Fast;
             }
-            else if (_chrono.Elapsed < TimeSpan.FromSeconds(10))
+            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(10))
             {
                 return ResponseLevel.Normal;
             }
-            else if (_chrono.Elapsed < TimeSpan.FromSeconds(15))
+            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(15))
             {
                 return ResponseLevel.Slow;
             }
@@ -86,7 +108,7 @@ namespace JapprendACompter
 
         private async Task ShowMessage(ResponseLevel responseLevel)
         {
-            _chrono = null;
+            _chronoReponse = null;
             var expectedAnswer = (_leftOperand + _rightOperand).ToString();
             switch (responseLevel)
             {
@@ -107,8 +129,18 @@ namespace JapprendACompter
                     break;
             }
 
-            _chrono = Stopwatch.StartNew();
-            GenerateOperation();
+            _responseCountByLevel[responseLevel] += 1;
+            _chronoTotal = _chronoTotal ?? Stopwatch.StartNew();
+
+            if (_chronoTotal.Elapsed > Duree)
+            {
+                await ShowEnd();
+            }
+            else
+            {
+                _chronoReponse = Stopwatch.StartNew();
+                GenerateOperation();
+            }
         }
 
         private async Task ShowMessage(string message, TimeSpan duration)
@@ -134,6 +166,22 @@ namespace JapprendACompter
             OperationTextblock.Text = $"{_leftOperand} + {_rightOperand} = ?";
             AnswerTextBox.Text = "";
             AnswerTextBox.Focus(FocusState.Programmatic);
+        }
+
+        private async Task ShowEnd()
+        {
+            var total = _responseCountByLevel.Values.Sum();
+            var totalRight = _responseCountByLevel.Where(r => r.Key.IsRight()).Sum(r => r.Value);
+
+            var message = $"{totalRight} réponses justes sur {total}\n"
+                        + $"Réponses rapides: {_responseCountByLevel[ResponseLevel.Fast]}\n"
+                        + $"Réponses normales: {_responseCountByLevel[ResponseLevel.Normal]}\n"
+                        + $"Réponses lentes: {_responseCountByLevel[ResponseLevel.Slow]}\n"
+                        + $"Réponses trop lentes: {_responseCountByLevel[ResponseLevel.TooSlow]}\n"
+                        + $"Réponses fausses: {_responseCountByLevel[ResponseLevel.Wrong]}\n";
+
+            await ShowMessage(message, TimeSpan.FromMinutes(1));
+            Init();
         }
     }
 }
