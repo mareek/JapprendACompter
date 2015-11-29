@@ -16,7 +16,7 @@ namespace JapprendACompter
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private static readonly TimeSpan Duree = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan Duree = TimeSpan.FromMinutes(5);
 
         private Dictionary<ResponseLevel, int> _responseCountByLevel;
 
