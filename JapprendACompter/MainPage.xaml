@@ -22,7 +22,6 @@
             <TextBlock>Combien font...</TextBlock>
             <TextBlock Name="OperationTextblock"/>
             <TextBox Name="AnswerTextBox" InputScope="Number" FontSize="50" Width="300" TextChanged="AnswerTextBox_TextChanged"/>
-            
         </StackPanel>
     </Grid>
 </Page>

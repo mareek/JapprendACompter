@@ -13,9 +13,7 @@ namespace JapprendACompter
 
     static class ResponseLevelExtension
     {
-        public static bool IsRight(this ResponseLevel responseLevel)
-        {
-            return new[] { ResponseLevel.Fast, ResponseLevel.Normal, ResponseLevel.Slow }.Contains(responseLevel);
-        }
+        public static bool IsRight(this ResponseLevel responseLevel) 
+            => new[] { ResponseLevel.Fast, ResponseLevel.Normal, ResponseLevel.Slow }.Contains(responseLevel);
     }
 }
