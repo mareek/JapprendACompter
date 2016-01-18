@@ -14,48 +14,25 @@ namespace JapprendACompter
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class AdditionPage : Page
     {
         private static readonly TimeSpan Duree = TimeSpan.FromMinutes(5);
 
-        private Dictionary<ResponseLevel, int> _responseCountByLevel;
 
-        private int _leftOperand;
-        private int _rightOperand;
+        private ExerciceAddition _exercice;
 
-        private int _wrongAnswerCount;
-
-        private Stopwatch _chronoReponse;
-        private Stopwatch _chronoTotal;
-
-        public MainPage()
+        public AdditionPage()
         {
             InitializeComponent();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Init();
+            _exercice = new ExerciceAddition();
+
             var getupppa = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
             getupppa.Tick += getupppa_Tick;
             getupppa.Start();
-        }
-
-        private void Init()
-        {
-            _responseCountByLevel = new Dictionary<ResponseLevel, int>
-            {
-                [ResponseLevel.Fast] = 0,
-                [ResponseLevel.Normal] = 0,
-                [ResponseLevel.Slow] = 0,
-                [ResponseLevel.TooSlow] = 0,
-                [ResponseLevel.Wrong] = 0
-            };
-
-            _chronoReponse = null;
-            _chronoTotal = null;
-
-            GenerateOperation();
         }
 
         private async void getupppa_Tick(object sender, object e)
@@ -68,8 +45,9 @@ namespace JapprendACompter
 
         private async void AnswerTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            var truc = _exercice.CheckAnswer(AnswerTextBox.Text);
+
             var expectedAnswer = (_leftOperand + _rightOperand).ToString();
-            var actualAnswer = AnswerTextBox.Text;
 
             if (actualAnswer == expectedAnswer)
             {

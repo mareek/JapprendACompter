@@ -29,7 +29,7 @@ namespace JapprendACompter
 
         private void AdditionButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(MainPage));
+            this.Frame.Navigate(typeof(AdditionPage));
         }
     }
 }

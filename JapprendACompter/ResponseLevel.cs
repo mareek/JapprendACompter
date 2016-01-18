@@ -2,7 +2,7 @@
 
 namespace JapprendACompter
 {
-    enum ResponseLevel
+    public enum ResponseLevel
     {
         Fast,
         Normal,
