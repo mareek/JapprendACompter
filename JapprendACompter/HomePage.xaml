@@ -13,6 +13,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="VerticalAlignment" Value="Stretch"/>
                 <Setter Property="Margin" Value="16"/>
+                <Setter Property="FontSize" Value="80"/>
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
@@ -24,16 +25,16 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Button Name="AdditionButton" Grid.Row="0" Grid.Column="0" Click="AdditionButton_Click">
-            Addition
+            Additions
         </Button>
-        <Button Name="SoustractionButton" Grid.Row="0" Grid.Column="1">
-            Soustraction
+        <Button Name="SoustractionButton" Grid.Row="0" Grid.Column="1" IsEnabled="False">
+            Soustractions
         </Button>
-        <Button Name="MultiplicationButton" Grid.Row="1" Grid.Column="0">
-            Multiplication
+        <Button Name="MultiplicationButton" Grid.Row="1" Grid.Column="0" IsEnabled="False">
+            Multiplications
         </Button>
-        <Button Name="DivisionButton" Grid.Row="1" Grid.Column="1">
-            Division
+        <Button Name="DivisionButton" Grid.Row="1" Grid.Column="1" IsEnabled="False">
+            Divisions
         </Button>
     </Grid>
 </Page>
