@@ -7,7 +7,11 @@ namespace JapprendACompter
 {
     public abstract class ExerciceBase
     {
+#if DEBUG
+        private static readonly TimeSpan Duree = TimeSpan.FromSeconds(30);
+#else
         private static readonly TimeSpan Duree = TimeSpan.FromMinutes(5);
+#endif
 
         private Dictionary<ResponseLevel, int> _responseCountByLevel;
 
@@ -41,7 +45,18 @@ namespace JapprendACompter
             Operation = GenerateOperation();
         }
 
-        public ResponseLevel? CheckAnswer(string actualAnswer)
+        public Message CheckAnswer(string actualAnswer)
+        {
+            var answer = CheckAnswerInternal(actualAnswer);
+            if (answer.HasValue)
+            {
+                _responseCountByLevel[answer.Value] += 1;
+            }
+
+            return GetMessage(answer);
+        }
+
+        private ResponseLevel? CheckAnswerInternal(string actualAnswer)
         {
             var expectedAnswer = Operation.ExpectedResult.ToString();
 
@@ -57,6 +72,10 @@ namespace JapprendACompter
             if (_wrongAnswerCount >= 3)
             {
                 return ResponseLevel.Wrong;
+            }
+            else if (_chronoReponse != null && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15))
+            {
+                return ResponseLevel.TooSlow;
             }
             else
             {
@@ -84,7 +103,7 @@ namespace JapprendACompter
             }
         }
 
-        public Message GetMessage(ResponseLevel responseLevel)
+        private Message GetMessage(ResponseLevel? responseLevel)
         {
             var expectedAnswer = Operation.ExpectedResult.ToString();
             switch (responseLevel)
@@ -100,14 +119,13 @@ namespace JapprendACompter
                 case ResponseLevel.Wrong:
                     return new Message("Perdu :-(\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
                 default:
-                    throw new ArgumentException($"Unkown value for {nameof(responseLevel)} : {responseLevel}");
+                    return null;
             }
 
         }
 
-        public bool TryShowNextOperation(ResponseLevel previousResponse)
+        public bool TryShowNextOperation()
         {
-            _responseCountByLevel[previousResponse] += 1;
             _chronoTotal = _chronoTotal ?? Stopwatch.StartNew();
 
             if (_chronoTotal.Elapsed > Duree)
