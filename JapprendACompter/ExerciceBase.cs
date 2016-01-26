@@ -17,6 +17,8 @@ namespace JapprendACompter
 
         private int _wrongAnswerCount;
 
+        protected virtual double TimeFactor => 1.0;
+
         private Stopwatch _chronoReponse;
 
         private Stopwatch _chronoTotal;
@@ -75,7 +77,7 @@ namespace JapprendACompter
             {
                 return ResponseLevel.Wrong;
             }
-            else if (_chronoReponse != null && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15))
+            else if (_chronoReponse != null && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15 * TimeFactor))
             {
                 return ResponseLevel.TooSlow;
             }
@@ -87,15 +89,15 @@ namespace JapprendACompter
 
         private ResponseLevel GetResponseLevel()
         {
-            if (_chronoReponse == null || _chronoReponse.Elapsed < TimeSpan.FromSeconds(5))
+            if (_chronoReponse == null || _chronoReponse.Elapsed < TimeSpan.FromSeconds(5 * TimeFactor))
             {
                 return ResponseLevel.Fast;
             }
-            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(10))
+            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(10 * TimeFactor))
             {
                 return ResponseLevel.Normal;
             }
-            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(15))
+            else if (_chronoReponse.Elapsed < TimeSpan.FromSeconds(15 * TimeFactor))
             {
                 return ResponseLevel.Slow;
             }
