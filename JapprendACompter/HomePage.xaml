@@ -27,11 +27,11 @@
         <Button Name="AdditionButton" Grid.Row="0" Grid.Column="0" Click="AdditionButton_Click">
             Additions
         </Button>
-        <Button Name="SoustractionButton" Grid.Row="0" Grid.Column="1" IsEnabled="False">
-            Soustractions
-        </Button>
-        <Button Name="MultiplicationButton" Grid.Row="1" Grid.Column="0" IsEnabled="False">
+        <Button Name="MultiplicationButton" Grid.Row="0" Grid.Column="1" Click="MultiplicationButton_Click">
             Multiplications
+        </Button>
+        <Button Name="SoustractionButton" Grid.Row="1" Grid.Column="0" IsEnabled="False">
+            Soustractions
         </Button>
         <Button Name="DivisionButton" Grid.Row="1" Grid.Column="1" IsEnabled="False">
             Divisions

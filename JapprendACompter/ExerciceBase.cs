@@ -21,7 +21,9 @@ namespace JapprendACompter
 
         private Stopwatch _chronoTotal;
 
-        public Operation Operation { get; private set; }
+        private Operation _operation;
+
+        public string Question => $"{_operation.LeftOperand} {_operation.OperationSign} {_operation.RightOperand} = ?";
 
         public ExerciceBase()
         {
@@ -42,7 +44,7 @@ namespace JapprendACompter
             _chronoReponse = null;
             _chronoTotal = null;
 
-            Operation = GenerateOperation();
+            _operation = GenerateOperation();
         }
 
         public Message CheckAnswer(string actualAnswer)
@@ -58,7 +60,7 @@ namespace JapprendACompter
 
         private ResponseLevel? CheckAnswerInternal(string actualAnswer)
         {
-            var expectedAnswer = Operation.ExpectedResult.ToString();
+            var expectedAnswer = _operation.ExpectedResult.ToString();
 
             if (actualAnswer == expectedAnswer)
             {
@@ -105,7 +107,7 @@ namespace JapprendACompter
 
         private Message GetMessage(ResponseLevel? responseLevel)
         {
-            var expectedAnswer = Operation.ExpectedResult.ToString();
+            var expectedAnswer = _operation.ExpectedResult.ToString();
             switch (responseLevel)
             {
                 case ResponseLevel.Fast:
@@ -136,7 +138,7 @@ namespace JapprendACompter
             {
                 _wrongAnswerCount = 0;
                 _chronoReponse = Stopwatch.StartNew();
-                Operation = GenerateOperation();
+                _operation = GenerateOperation();
                 return true;
             }
         }

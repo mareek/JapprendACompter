@@ -3,25 +3,38 @@ using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace JapprendACompter
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AdditionPage : Page
+    public sealed partial class ExercicePage : Page
     {
-        private ExerciceAddition _exercice;
+        private ExerciceBase _exercice;
         private DispatcherTimer _getupppa = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
 
-        public AdditionPage()
+        public ExercicePage()
         {
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            _exercice = new ExerciceAddition();
+            base.OnNavigatedTo(e);
+
+            switch (e.Parameter.ToString())
+            {
+                case "Addition":
+                    _exercice = new Addition();
+                    break;
+                case "Multiplication":
+                    _exercice = new Multiplication();
+                    break;
+                default:
+                    throw new NotSupportedException("Opération inconnue : " + e.Parameter);
+            }
 
             ShowOperation();
 
@@ -31,8 +44,7 @@ namespace JapprendACompter
 
         private void ShowOperation()
         {
-            var operation = _exercice.Operation;
-            OperationTextblock.Text = $"{operation.LeftOperand} {operation.OperationSign} {operation.RightOperand} = ?";
+            QuestionTextblock.Text = _exercice.Question;
             AnswerTextBox.Text = "";
             AnswerTextBox.Focus(FocusState.Programmatic);
         }

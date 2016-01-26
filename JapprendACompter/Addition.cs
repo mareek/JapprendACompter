@@ -2,7 +2,7 @@
 
 namespace JapprendACompter
 {
-    public class ExerciceAddition : ExerciceBase
+    public class Addition : ExerciceBase
     {
         protected override Operation GenerateOperation()
         {

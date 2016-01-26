@@ -99,14 +99,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExerciceAddition.cs" />
+    <Compile Include="Addition.cs" />
     <Compile Include="ExerciceBase.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdditionPage.xaml.cs">
-      <DependentUpon>AdditionPage.xaml</DependentUpon>
+    <Compile Include="ExercicePage.xaml.cs">
+      <DependentUpon>ExercicePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Multiplication.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="ResponseLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,7 +139,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AdditionPage.xaml">
+    <Page Include="ExercicePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
