@@ -73,6 +73,7 @@ namespace JapprendACompter
                 else
                 {
                     await ShowMessage(_exercice.GetEndMessage());
+                    Frame.Navigate(typeof(HomePage));
                 }
             }
         }
