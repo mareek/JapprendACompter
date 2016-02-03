@@ -7,7 +7,7 @@ namespace JapprendACompter
     {
         private const string MultiplicationMaxSetting = "MultiplicationMax";
 
-        private static IPropertySet SettingValues { get { return ApplicationData.Current.RoamingSettings.Values; } }
+        private static IPropertySet SettingValues => ApplicationData.Current.RoamingSettings.Values;
 
         public static int MultiplicationMax
         {
