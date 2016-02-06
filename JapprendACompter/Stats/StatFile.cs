@@ -13,7 +13,7 @@ namespace JapprendACompter.Stats
         private const string StatFileName = "stats.xml";
 
         private static Lazy<Task<StatFile>> LazyFile = new Lazy<Task<StatFile>>(async () => new StatFile(await GetDocumentAsync()));
-        public StatFile Instance => LazyFile.Value.Result;
+        public static StatFile Instance => LazyFile.Value.Result;
 
         private StatFile(XDocument document)
         {
@@ -43,10 +43,7 @@ namespace JapprendACompter.Stats
                                          new XElement("Session",
                                              Sessions.Select(s => s.ToXml())));
 
-        public async Task LoadFileAsync()
-        {
-            await LazyFile.Value;
-        }
+        public static Task LoadFileAsync() => LazyFile.Value;
 
         private static async Task<XDocument> GetDocumentAsync()
         {

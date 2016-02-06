@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JapprendACompter.Stats;
 
 namespace JapprendACompter
 {
@@ -13,27 +14,20 @@ namespace JapprendACompter
         private static readonly TimeSpan Duree = TimeSpan.FromMinutes(5);
 #endif
 
-        private Dictionary<ResponseLevel, int> _responseCountByLevel;
+        private readonly Session _session;
+        private readonly Dictionary<ResponseLevel, int> _responseCountByLevel;
 
         private int _wrongAnswerCount;
+        private bool _firstQuestion;
+        private Stopwatch _chronoReponse;
+        private Stopwatch _chronoTotal;
+        private Operation _operation;
 
         protected virtual double TimeFactor => 1.0;
 
-        private Stopwatch _chronoReponse;
-
-        private Stopwatch _chronoTotal;
-
-        private Operation _operation;
-
-        public string Question => $"{_operation.LeftOperand} {_operation.OperationSign} {_operation.RightOperand} = ?";
-
         public ExerciceBase()
         {
-            Init();
-        }
-
-        private void Init()
-        {
+            _session = StatFile.Instance.NewSession();
             _responseCountByLevel = new Dictionary<ResponseLevel, int>
             {
                 [ResponseLevel.Fast] = 0,
@@ -43,17 +37,20 @@ namespace JapprendACompter
                 [ResponseLevel.Wrong] = 0
             };
 
-            _chronoReponse = null;
             _chronoTotal = null;
 
+            _chronoReponse = Stopwatch.StartNew();
             _operation = GenerateOperation();
         }
+
+        public string Question => $"{_operation.LeftOperand} {_operation.OperationSign} {_operation.RightOperand} = ?";
 
         public Message CheckAnswer(string actualAnswer)
         {
             var answer = CheckAnswerInternal(actualAnswer);
             if (answer.HasValue)
             {
+                _session.AddQuestion(Question, answer.Value.IsRight(), _chronoReponse.Elapsed);
                 _responseCountByLevel[answer.Value] += 1;
             }
 
@@ -77,7 +74,7 @@ namespace JapprendACompter
             {
                 return ResponseLevel.Wrong;
             }
-            else if (_chronoReponse != null && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15 * TimeFactor))
+            else if (!_firstQuestion && _chronoReponse.Elapsed > TimeSpan.FromSeconds(15 * TimeFactor))
             {
                 return ResponseLevel.TooSlow;
             }
@@ -89,7 +86,7 @@ namespace JapprendACompter
 
         private ResponseLevel GetResponseLevel()
         {
-            if (_chronoReponse == null || _chronoReponse.Elapsed < TimeSpan.FromSeconds(5 * TimeFactor))
+            if (_firstQuestion || _chronoReponse.Elapsed < TimeSpan.FromSeconds(5 * TimeFactor))
             {
                 return ResponseLevel.Fast;
             }
@@ -125,7 +122,6 @@ namespace JapprendACompter
                 default:
                     return null;
             }
-
         }
 
         public bool TryShowNextOperation()

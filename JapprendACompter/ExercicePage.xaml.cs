@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JapprendACompter.Stats;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
@@ -75,6 +76,7 @@ namespace JapprendACompter
                 }
                 else
                 {
+                    await StatFile.Instance.Save();
                     await ShowMessage(_exercice.GetEndMessage());
                     Frame.Navigate(typeof(HomePage));
                 }
