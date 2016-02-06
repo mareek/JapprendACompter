@@ -14,7 +14,7 @@
                 <Setter Property="FontSize" Value="50"/>
             </Style>
         </Grid.Resources>
-        <Grid Name="FullScreenMessagePanel" Background="Black" Visibility="Collapsed">
+        <Grid Name="FullScreenMessagePanel" Background="Black" Visibility="Collapsed" PointerReleased="FullScreenMessagePanel_PointerReleased">
             <TextBlock Name="MessageTextBlock" FontSize="92" Foreground="White" VerticalAlignment="Center" TextAlignment="Center"/>
         </Grid>
         <StackPanel Name="ContentPanel">

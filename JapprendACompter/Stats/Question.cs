@@ -10,8 +10,6 @@ namespace JapprendACompter.Stats
 {
     public class Question
     {
-        private XElement e;
-
         public string Text { get; }
 
         public bool Correct { get; }

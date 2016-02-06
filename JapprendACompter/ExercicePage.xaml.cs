@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -13,6 +14,8 @@ namespace JapprendACompter
     public sealed partial class ExercicePage : Page
     {
         private ExerciceBase _exercice;
+
+        private CancellationTokenSource _messagePanelCancellationTokenSource = null;
         private DispatcherTimer _getupppa = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
 
         public ExercicePage()
@@ -86,11 +89,31 @@ namespace JapprendACompter
             ContentPanel.Visibility = Visibility.Collapsed;
             InputPane.GetForCurrentView().TryHide();
 
-            await Task.Delay(message.Duration);
+            using (_messagePanelCancellationTokenSource = new CancellationTokenSource())
+            {
+                try
+                {
+                    await Task.Delay(message.Duration, _messagePanelCancellationTokenSource.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    /* avoid ghost event that prevent the input field from keeping focus */
+                    await Task.Delay(TimeSpan.FromSeconds(0.1));
+                }
+            }
 
+            _messagePanelCancellationTokenSource = null;
             FullScreenMessagePanel.Visibility = Visibility.Collapsed;
             ContentPanel.Visibility = Visibility.Visible;
             _getupppa.Start();
+        }
+
+        private void FullScreenMessagePanel_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            if (_messagePanelCancellationTokenSource != null && !_messagePanelCancellationTokenSource.IsCancellationRequested)
+            {
+                _messagePanelCancellationTokenSource.Cancel();
+            }
         }
     }
 }
