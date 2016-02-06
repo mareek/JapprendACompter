@@ -12,13 +12,45 @@ namespace JapprendACompter.Stats
     {
         private const string StatFileName = "stats.xml";
 
-        private static Lazy<Task<StatFile>> LazyFile = new Lazy<Task<StatFile>>(async () => new StatFile(await LoadFile()));
+        private static Lazy<Task<StatFile>> LazyFile = new Lazy<Task<StatFile>>(async () => new StatFile(await GetDocumentAsync()));
+        public StatFile Instance => LazyFile.Value.Result;
 
-        public Task<StatFile> Instance => LazyFile.Value;
-
-        private static async Task<XDocument> LoadFile()
+        private StatFile(XDocument document)
         {
-            var statFile = await GetStatFileAsync();
+            Sessions = document.Root.Descendants("Session").Select(e => new Session(e)).ToList();
+        }
+
+        public List<Session> Sessions { get; }
+
+        public Session NewSession()
+        {
+            var session = new Session();
+            Sessions.Add(session);
+            return session;
+        }
+
+        public async Task Save()
+        {
+            var statFile = await TryGetStatFileAsync() ?? await ApplicationData.Current.LocalFolder.CreateFileAsync(StatFileName);
+
+            using (var statFileStream = await statFile.OpenStreamForWriteAsync())
+            {
+                ToXml().Save(statFileStream);
+            }
+        }
+
+        private XDocument ToXml() => new XDocument(
+                                         new XElement("Session",
+                                             Sessions.Select(s => s.ToXml())));
+
+        public async Task LoadFileAsync()
+        {
+            await LazyFile.Value;
+        }
+
+        private static async Task<XDocument> GetDocumentAsync()
+        {
+            var statFile = await TryGetStatFileAsync();
             if (statFile == null)
             {
                 return new XDocument(new XElement("Sessions"));
@@ -30,26 +62,6 @@ namespace JapprendACompter.Stats
             }
         }
 
-        private readonly XDocument _document;
-
-        private StatFile(XDocument document)
-        {
-            _document = document;
-            Sessions = document.Root.Descendants("Session").Select(e => new Session(e)).ToList();
-        }
-
-        public List<Session> Sessions { get; }
-
-        public async Task Save()
-        {
-            var statFile = await GetStatFileAsync() ?? await ApplicationData.Current.LocalFolder.CreateFileAsync(StatFileName);
-
-            using (var statFileStream = await statFile.OpenStreamForWriteAsync())
-            {
-                _document.Save(statFileStream);
-            }
-        }
-
-        private static async Task<StorageFile> GetStatFileAsync() => await ApplicationData.Current.LocalFolder.TryGetItemAsync(StatFileName) as StorageFile;
+        private static async Task<StorageFile> TryGetStatFileAsync() => await ApplicationData.Current.LocalFolder.TryGetItemAsync(StatFileName) as StorageFile;
     }
 }
