@@ -22,10 +22,10 @@ namespace JapprendACompter.Stats
 
         public List<Session> Sessions { get; }
 
-        public Session NewSession()
+        public Session NewSession(string exercice)
         {
-            var session = new Session();
-            Sessions.Add(session);
+            var session = new Session(exercice);
+            Sessions.Insert(0, session);
             return session;
         }
 
@@ -39,9 +39,9 @@ namespace JapprendACompter.Stats
             }
         }
 
-        private XDocument ToXml() => new XDocument(
-                                         new XElement("Session",
-                                             Sessions.Select(s => s.ToXml())));
+        public XDocument ToXml() => new XDocument(
+                                        new XElement("Session",
+                                            Sessions.Select(s => s.ToXml())));
 
         public static Task LoadFileAsync() => LazyFile.Value;
 

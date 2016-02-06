@@ -15,9 +15,15 @@
                 <Setter Property="Margin" Value="16"/>
                 <Setter Property="FontSize" Value="80"/>
             </Style>
+            <Style TargetType="HyperlinkButton">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="FontSize" Value="24"/>
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="4*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,5 +42,6 @@
         <Button Name="DivisionButton" Grid.Row="1" Grid.Column="1" IsEnabled="False">
             Divisions
         </Button>
+        <HyperlinkButton Name="StatLink" Grid.Row="2" Grid.Column="0"  Click="StatLink_Click">Stats</HyperlinkButton>
     </Grid>
 </Page>

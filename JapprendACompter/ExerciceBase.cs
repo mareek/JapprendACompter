@@ -27,7 +27,7 @@ namespace JapprendACompter
 
         public ExerciceBase()
         {
-            _session = StatFile.Instance.NewSession();
+            _session = StatFile.Instance.NewSession(GetType().Name);
             _responseCountByLevel = new Dictionary<ResponseLevel, int>
             {
                 [ResponseLevel.Fast] = 0,
@@ -130,6 +130,7 @@ namespace JapprendACompter
 
             if (_chronoTotal.Elapsed > Duree)
             {
+                _operation = null;
                 return false;
             }
             else

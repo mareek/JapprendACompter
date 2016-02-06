@@ -15,7 +15,9 @@
             </Style>
         </Grid.Resources>
         <Grid Name="FullScreenMessagePanel" Background="Black" Visibility="Collapsed" PointerReleased="FullScreenMessagePanel_PointerReleased">
-            <TextBlock Name="MessageTextBlock" FontSize="92" Foreground="White" VerticalAlignment="Center" TextAlignment="Center"/>
+            <Viewbox StretchDirection="DownOnly">
+                <TextBlock Name="MessageTextBlock" FontSize="92" Foreground="White" VerticalAlignment="Center" TextAlignment="Center"/>
+            </Viewbox>
         </Grid>
         <StackPanel Name="ContentPanel">
             <TextBlock>Combien font...</TextBlock>

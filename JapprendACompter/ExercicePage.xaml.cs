@@ -77,13 +77,13 @@ namespace JapprendACompter
                 else
                 {
                     await StatFile.Instance.Save();
-                    await ShowMessage(_exercice.GetEndMessage());
+                    await ShowMessage(_exercice.GetEndMessage(), false);
                     Frame.Navigate(typeof(HomePage));
                 }
             }
         }
 
-        private async Task ShowMessage(ExerciceBase.Message message)
+        private async Task ShowMessage(ExerciceBase.Message message, bool continueExerciceAfterMessage = true)
         {
             _getupppa.Stop();
             MessageTextBlock.Text = message.Text;
@@ -104,10 +104,13 @@ namespace JapprendACompter
                 }
             }
 
-            _messagePanelCancellationTokenSource = null;
-            FullScreenMessagePanel.Visibility = Visibility.Collapsed;
-            ContentPanel.Visibility = Visibility.Visible;
-            _getupppa.Start();
+            if (continueExerciceAfterMessage)
+            {
+                _messagePanelCancellationTokenSource = null;
+                FullScreenMessagePanel.Visibility = Visibility.Collapsed;
+                ContentPanel.Visibility = Visibility.Visible;
+                _getupppa.Start();
+            }
         }
 
         private void FullScreenMessagePanel_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)

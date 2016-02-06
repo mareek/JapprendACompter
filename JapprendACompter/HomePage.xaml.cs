@@ -13,6 +13,7 @@ namespace JapprendACompter
         public HomePage()
         {
             this.InitializeComponent();
+            Stats.StatFile.LoadFileAsync();
         }
 
         private void AdditionButton_Click(object sender, RoutedEventArgs e)
@@ -23,6 +24,11 @@ namespace JapprendACompter
         private void MultiplicationButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(ExercicePage), "Multiplication");
+        }
+
+        private void StatLink_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(StatPage));
         }
     }
 }
