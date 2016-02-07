@@ -43,7 +43,7 @@ namespace JapprendACompter
             _operation = GenerateOperation();
         }
 
-        public string Question => $"{_operation.LeftOperand} {_operation.OperationSign} {_operation.RightOperand} = ?";
+        public string Question => _operation.GetQuestionLabel();
 
         public Message CheckAnswer(string actualAnswer)
         {
@@ -140,6 +140,31 @@ namespace JapprendACompter
                 _operation = GenerateOperation();
                 return true;
             }
+        }
+
+        private Operation GenerateUnansweredOperation()
+        {
+            var knownOperations = new HashSet<string>(from session in StatFile.Instance.Sessions
+                                                      where session.Exercice == GetType().Name
+                                                      from question in session.Questions
+                                                      group question by question.Text into questionGroup
+                                                      select new
+                                                      {
+                                                          Text = questionGroup.Key,
+                                                          GoodAnswers = questionGroup.Count(q => q.Correct),
+                                                          BadAnswers = questionGroup.Count(q => !q.Correct)
+                                                      } into answerStat
+                                                      where answerStat.GoodAnswers > 5
+                                                            && answerStat.GoodAnswers > 2 * answerStat.BadAnswers
+                                                      select answerStat.Text);
+
+            Operation operation;
+            do
+            {
+                operation = GenerateOperation();
+            } while (!knownOperations.Contains(operation.GetQuestionLabel()));
+
+            return operation;
         }
 
         protected abstract Operation GenerateOperation();

@@ -17,5 +17,7 @@
             ExpectedResult = expectedResult;
             OperationSign = operationSign;
         }
+
+        public string GetQuestionLabel() => $"{LeftOperand} {OperationSign} {RightOperand} = ?";
     }
 }
