@@ -14,6 +14,7 @@ namespace JapprendACompter
         private static readonly TimeSpan Duree = TimeSpan.FromMinutes(5);
 #endif
 
+        private readonly bool _learningMode;
         private readonly Session _session;
         private readonly Dictionary<ResponseLevel, int> _responseCountByLevel;
 
@@ -25,8 +26,9 @@ namespace JapprendACompter
 
         protected virtual double TimeFactor => 1.0;
 
-        public ExerciceBase()
+        protected ExerciceBase(bool learningMode)
         {
+            _learningMode = learningMode;
             _session = StatFile.Instance.NewSession(GetType().Name);
             _responseCountByLevel = new Dictionary<ResponseLevel, int>
             {
@@ -40,7 +42,7 @@ namespace JapprendACompter
             _chronoTotal = null;
 
             _chronoReponse = Stopwatch.StartNew();
-            _operation = GenerateOperation();
+            _operation = GenerateOperationInternal();
         }
 
         public string Question => _operation.GetQuestionLabel();
@@ -137,10 +139,12 @@ namespace JapprendACompter
             {
                 _wrongAnswerCount = 0;
                 _chronoReponse = Stopwatch.StartNew();
-                _operation = GenerateOperation();
+                _operation = GenerateOperationInternal();
                 return true;
             }
         }
+
+        private Operation GenerateOperationInternal() => _learningMode ? GenerateUnansweredOperation() : GenerateOperation();
 
         private Operation GenerateUnansweredOperation()
         {

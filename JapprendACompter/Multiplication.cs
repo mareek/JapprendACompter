@@ -4,6 +4,12 @@ namespace JapprendACompter
 {
     public class Multiplication : ExerciceBase
     {
+        public Multiplication(bool learningMode)
+            : base(learningMode)
+        {
+
+        }
+
         protected override double TimeFactor => 1.5;
 
         protected override Operation GenerateOperation()

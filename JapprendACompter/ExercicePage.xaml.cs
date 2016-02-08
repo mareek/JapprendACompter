@@ -31,10 +31,10 @@ namespace JapprendACompter
             switch (e.Parameter.ToString())
             {
                 case "Addition":
-                    _exercice = new Addition();
+                    _exercice = new Addition(false);
                     break;
                 case "Multiplication":
-                    _exercice = new Multiplication();
+                    _exercice = new Multiplication(false);
                     break;
                 default:
                     throw new NotSupportedException("Opération inconnue : " + e.Parameter);

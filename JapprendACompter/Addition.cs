@@ -4,6 +4,12 @@ namespace JapprendACompter
 {
     public class Addition : ExerciceBase
     {
+        public Addition(bool learningMode)
+            : base(learningMode)
+        {
+
+        }
+
         protected override Operation GenerateOperation()
         {
             var rnd = new Random();
