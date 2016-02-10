@@ -8,6 +8,8 @@ namespace JapprendACompter
 {
     public abstract class ExerciceBase
     {
+        private const int GoodAnswerTarget = 10;
+
 #if DEBUG
         private static readonly TimeSpan Duree = TimeSpan.FromSeconds(30);
 #else
@@ -18,6 +20,7 @@ namespace JapprendACompter
         private readonly Session _session;
         private readonly Dictionary<ResponseLevel, int> _responseCountByLevel;
 
+        private int _goodAnswerCount;
         private int _wrongAnswerCount;
         private bool _firstQuestion;
         private Stopwatch _chronoReponse;
@@ -39,6 +42,7 @@ namespace JapprendACompter
                 [ResponseLevel.Wrong] = 0
             };
 
+            _goodAnswerCount = 0;
             _chronoTotal = null;
 
             _chronoReponse = Stopwatch.StartNew();
@@ -54,6 +58,7 @@ namespace JapprendACompter
             {
                 _session.AddQuestion(Question, answer.Value.IsRight(), _chronoReponse.Elapsed);
                 _responseCountByLevel[answer.Value] += 1;
+                _goodAnswerCount += answer.Value.IsRight() ? 1 : 0;
             }
 
             return GetMessage(answer);
@@ -130,7 +135,7 @@ namespace JapprendACompter
         {
             _chronoTotal = _chronoTotal ?? Stopwatch.StartNew();
 
-            if (_chronoTotal.Elapsed > Duree)
+            if (_chronoTotal.Elapsed > Duree || (_learningMode && _goodAnswerCount > GoodAnswerTarget))
             {
                 _operation = null;
                 return false;
