@@ -19,5 +19,7 @@
         }
 
         public string GetQuestionLabel() => $"{LeftOperand} {OperationSign} {RightOperand} = ?";
+
+        public string GetQuestionAndAnswerLabel() => $"{LeftOperand} {OperationSign} {RightOperand} = {ExpectedResult}";
     }
 }

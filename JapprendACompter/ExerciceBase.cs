@@ -113,19 +113,20 @@ namespace JapprendACompter
 
         private Message GetMessage(ResponseLevel? responseLevel)
         {
+            var header = _operation.GetQuestionAndAnswerLabel() + "\n\n";
             var expectedAnswer = _operation.ExpectedResult.ToString();
             switch (responseLevel)
             {
                 case ResponseLevel.Fast:
-                    return new Message("Bravo !", TimeSpan.FromSeconds(2));
+                    return new Message(header + "Bravo !", TimeSpan.FromSeconds(2));
                 case ResponseLevel.Normal:
-                    return new Message("C'est bien.", TimeSpan.FromSeconds(2));
+                    return new Message(header + "C'est bien.", TimeSpan.FromSeconds(2));
                 case ResponseLevel.Slow:
-                    return new Message("Juste mais lent...", TimeSpan.FromSeconds(3));
+                    return new Message(header + "Juste mais lent...", TimeSpan.FromSeconds(3));
                 case ResponseLevel.TooSlow:
-                    return new Message("Trop lent !\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
+                    return new Message(header + "Trop lent !\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
                 case ResponseLevel.Wrong:
-                    return new Message("Perdu :-(\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
+                    return new Message(header + "Perdu :-(\nLa bonne réponse était\n" + expectedAnswer, TimeSpan.FromSeconds(5));
                 default:
                     return null;
             }
