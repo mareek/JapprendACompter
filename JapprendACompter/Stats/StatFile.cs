@@ -52,10 +52,19 @@ namespace JapprendACompter.Stats
             {
                 return new XDocument(new XElement("Sessions"));
             }
-
-            using (var statFileStream = await statFile.OpenStreamForReadAsync())
+            try
             {
-                return XDocument.Load(statFileStream);
+                using (var statFileStream = await statFile.OpenStreamForReadAsync())
+                {
+                    return XDocument.Load(statFileStream);
+                }
+
+            }
+            catch 
+            {
+                //corrupt file, delete it
+                await statFile.DeleteAsync();
+                return new XDocument(new XElement("Sessions"));
             }
         }
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace JapprendACompter
@@ -113,7 +114,7 @@ namespace JapprendACompter
             }
         }
 
-        private void FullScreenMessagePanel_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void FullScreenMessagePanel_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             if (_messagePanelCancellationTokenSource != null && !_messagePanelCancellationTokenSource.IsCancellationRequested)
             {
